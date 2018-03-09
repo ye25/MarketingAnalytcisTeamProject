@@ -15,16 +15,51 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+
+#The URL for our Team GitHub repository is https://github.com/ye25/MarketingAnalytcisTeamProject 
+```{r}
+
+library(readr)
+housing_df <- read_csv("ny_hmda_2015.csv")
+
+```
+#Dataset Problem 1: Too many repetitive columns. Though this can be thoughful to cover all the types of answers, this is redundant in analyzing the data. 
+#Dataset Problem 2: Most nummerical columns have a categorical column to explain. This process is pretty uncessary because numerical is more powerful in analyzing the data. Moreover, the catogircal means can be explained in the data dictionary part. 
+
+#The managerial objective of this dataset is to precisely decide if the housing mortgage should be approved based on candidates' information. Final managerial objective:  - Where are mortgages most likely to be approved?     - Can we predict mortgage decisions based on the criteria provided here?
+
+
+#clean the data
+
+```{r}
+clean_housing_df <- subset(housing_df, select = -c(10:13,15:18,27:30,32:35,40:47,77))
+clean_housing_df <- subset(clean_housing_df, select = -c(2,4,5,7,10,12,17,19,21,23,25,27,29,31,33,35,37,39,41,45,46))
+clean_housing_df <- na.omit(clean_housing_df)
+
+summary(clean_housing_df)
+
+install.packages("pastecs")
+library(pastecs)
+stat.desc(clean_housing_df)
+
 ```
 
-## Including Plots
+#plot graphs for important variables
+```{r}
+hist(clean_housing_df$action_taken, xlab = "Action taken on loan", ylab = "Frequency", main ="Action taken on loan")
+hist(clean_housing_df$applicant_ethnicity, main ="applicant ethnicity", xlab= "applicant ethnicity", ylab= "count")
+hist(clean_housing_df$applicant_sex, main ="applicant gender", xlab= "applicant gender", ylab= "count")
+plot(density(clean_housing_df$applicant_income_000s, na.rm=TRUE), main = "applicant income", xlab = "applicant income", ylab = "density")
+hist(clean_housing_df$applicant_ethnicity, main = "applicant ethnicity", xlab = "ethnicity", ylab = "count")
+plot(density(clean_housing_df$loan_amount_000s, na.rm=TRUE), main = "loan amount", xlab = "loan amount", ylab = "density")
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+#6. Create bivariate frequency distributions (tables or plots) for key variables
+
+plot(clean_housing_df$loan_amount_000s, clean_housing_df$applicant_income_000s)
+cor(clean_housing_df$applicant_ethnicity, clean_housing_df$action_taken)
+
+```
+
